@@ -1,40 +1,37 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
+from models.pedidos import EstadoPedidoEnum
 
-class DetallePedidoBase(BaseModel):
-    pedido_id: int
+
+class DetallePedidoCreate(BaseModel):
+    producto_id: int
+    cantidad: int
+
+class DetallePedidoOut(BaseModel):
     producto_id: int
     cantidad: int
     precio: float
-
-class DetallePedidoCreate(DetallePedidoBase):
-    pass
-
-class DetallePedidoOut(DetallePedidoBase):
-    id: int
-    pedido_id: int
-    producto_id: int
-    cantidad: int
     class Config:
         orm_mode = True
 
 
-class PedidoBase(BaseModel):
-    id_usuario: int
-    id_negocio: int
-    total: Optional[float] = 0.0
+class PedidoCreate(BaseModel):
     notas: Optional[str] = None
     detalles : List[DetallePedidoCreate]
 
-class PedidoCreate(PedidoBase):
-    pass
-
-class PedidoOut(PedidoBase):
+class PedidoOut(BaseModel):
     id: int
-    usuario_id: int
-    restaurante_id: int
+    id_usuario: int
+    id_negocio: Optional[int]
+    notas :str
     detalles: List[DetallePedidoOut]
+
+    class Config:
+        orm_mode = True
+
+class PedidoEstadoUpdate(BaseModel):
+    estado: EstadoPedidoEnum
 
     class Config:
         orm_mode = True

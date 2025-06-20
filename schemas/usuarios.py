@@ -6,16 +6,23 @@ from sqlmodel import Field
 from schemas.pedidos import PedidoOut
 from schemas.negocio import NegocioOut
 from schemas.resenas import ResenaOut
+from enum import Enum
 
+
+class RolUsuario(str, Enum):
+    usuario = "usuario"
+    admin = "admin"
+    
 class UsuarioBase(BaseModel):
     nombre: str
     email: EmailStr
     telefono : str
     direccion : Optional[str] = None
-    id_plan : int
+    id_plan : int = 2
+    rol : RolUsuario = RolUsuario.usuario
 
 class UsuarioCreate(UsuarioBase):
-    pass
+    password: str
 
 class Usuario(UsuarioBase):
     id: int
@@ -28,3 +35,10 @@ class Usuario(UsuarioBase):
 
     class Config:
         orm_mode = True
+
+class UsuarioLogin(BaseModel):
+    correo: EmailStr
+    contrasena: str
+
+
+

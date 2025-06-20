@@ -5,6 +5,8 @@ from typing import List
 from basedatos import get_db
 from schemas.producto import ProductoCreate, ProductoOut
 from crud.producto import get_producto, get_productos, create_producto, update_producto, delete_producto
+from autenti import get_current_user
+from models.usuarios import Usuario
 
 router = APIRouter(prefix="/productos", tags=["Productos"])
 
@@ -21,8 +23,8 @@ def read_producto(producto_id: int, db: Session = Depends(get_db)):
     return producto
 
 @router.post("/", response_model=ProductoOut)
-def create_new_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
-    return create_producto(db, producto)
+def create_new_producto(producto: ProductoCreate, db: Session = Depends(get_db), current_user : Usuario = Depends(get_current_user)):
+    return create_producto(db, producto, current_user.id)
 
 @router.put("/{producto_id}", response_model=ProductoOut)
 def update_existing_producto(producto_id: int, producto: ProductoCreate, db: Session = Depends(get_db)):

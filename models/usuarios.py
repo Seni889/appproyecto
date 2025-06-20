@@ -12,8 +12,12 @@ class Usuario(Base):
     direccion = Column(String(200))
     fecha_registro = Column(DateTime, default=datetime.utcnow)
     id_plan = Column(Integer, ForeignKey("planes_usuarios.id"))
+    
+    hashed_password = Column(String(200), nullable=False)
+    rol = Column(String(50), default="usuario") #usuario o admin
 
     plan = relationship("PlanUsuario", back_populates="usuarios")
     pedidos = relationship("Pedido", back_populates="usuarios")
     resenas = relationship("Resenas", back_populates="usuarios")
     negocios = relationship("Negocio", back_populates="usuarios")
+

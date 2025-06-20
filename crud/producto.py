@@ -1,6 +1,8 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from models.productos import Producto
 from schemas.producto import ProductoCreate
+from fastapi import HTTPException
+from models.negocio import Categoria, Negocio
 
 def get_producto(db: Session, producto_id: int):
     return db.query(Producto).filter(Producto.id == producto_id).first()
@@ -8,18 +10,29 @@ def get_producto(db: Session, producto_id: int):
 def get_productos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Producto).offset(skip).limit(limit).all()
 
-def create_producto(db: Session, producto: ProductoCreate):
-    db_producto = Producto(
-        nombre=producto.nombre,
-        descripcion=producto.descripcion,
-        precio=producto.precio,
-        disponible=producto.disponible,
-        id_categoria=producto.id_categoria,
+def create_producto(db: Session, producto_data: ProductoCreate, current_user_id: int):
+    # Buscar el negocio del usuario actual
+    negocio = db.query(Negocio).filter(Negocio.id_usuario == current_user_id).first()
+    if not negocio:
+        raise HTTPException(status_code=404, detail="No tienes un negocio registrado.")
+
+    # Obtener automáticamente los IDs
+    id_categoria = negocio.id_categoria
+    id_negocio = negocio.id
+
+    # Crear producto con los campos necesarios
+    nuevo_producto = Producto(
+        nombre=producto_data.nombre,
+        descripcion=producto_data.descripcion,
+        precio=producto_data.precio,
+        id_categoria=id_categoria,
+        id_negocio=id_negocio
     )
-    db.add(db_producto)
+
+    db.add(nuevo_producto)
     db.commit()
-    db.refresh(db_producto)
-    return db_producto
+    db.refresh(nuevo_producto)
+    return nuevo_producto
 
 def update_producto(db: Session, producto_id: int, producto: ProductoCreate):
     db_producto = get_producto(db, producto_id)

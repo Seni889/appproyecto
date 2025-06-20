@@ -1,13 +1,22 @@
 from sqlalchemy.orm import Session, joinedload
 from models.usuarios import Usuario
 from schemas.usuarios import UsuarioCreate
-
+from autenti import hash_password
 
 def crear_usuario(db: Session, usuario: UsuarioCreate):
     existente = db.query(Usuario).filter(Usuario.email == usuario.email).first()
     if existente:
         raise ValueError("El correo ya está registrado.")
-    db_usuario = Usuario(**usuario.dict())
+    hashed_pw = hash_password(usuario.password)
+    db_usuario = Usuario(
+        nombre=usuario.nombre,
+        email=usuario.email,
+        telefono=usuario.telefono,
+        direccion=usuario.direccion,
+        id_plan=2,
+        hashed_password=hashed_pw,
+        rol=usuario.rol or "usuario"
+    )
     db.add(db_usuario)
     db.commit()
     db.refresh(db_usuario)
@@ -36,3 +45,5 @@ def delete_usuario(db: Session, usuario_id: int):
     db.delete(db_usuario)
     db.commit()
     return db_usuario
+
+

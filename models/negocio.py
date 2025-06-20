@@ -21,12 +21,15 @@ class Negocio(Base):
     resenas = relationship("Resenas", back_populates="negocios")
     pedidos = relationship("Pedido", back_populates="negocios")
     categoria = relationship("Categoria", back_populates="negocios")
+    productos = relationship("Producto", back_populates="negocio")
+    
 
 class Categoria(Base):
     __tablename__ = "categorias"
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
-    
+
+
     productos = relationship("Producto", back_populates="categoria")
     negocios = relationship("Negocio", back_populates="categoria")
 

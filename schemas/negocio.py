@@ -14,11 +14,11 @@ class NegocioBase(BaseModel):
 
 class NegocioCreate(NegocioBase):
     pass
-    id_usuario : int
     id_categoria : int
 
 class NegocioOut(NegocioBase):
     id: int
+    
     nombre: str
     direccion : Optional[str] = None
     class Config:

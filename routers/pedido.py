@@ -1,16 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 from typing import List
-
-
+from autenti import get_current_user, get_current_admin
+from models.usuarios import Usuario
 from basedatos import get_db
 from crud.pedido import (
     get_pedidos, get_pedido, create_pedido,
-    get_detalles_pedido, get_detalle_pedido, create_detalle_pedido
+    get_detalles_pedido, get_detalle_pedido, create_detalle_pedido, update_pedido
 )
 from schemas.pedidos import (
     PedidoOut, PedidoCreate,
-    DetallePedidoOut, DetallePedidoCreate
+    DetallePedidoOut, DetallePedidoCreate, PedidoEstadoUpdate
 )
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
@@ -27,9 +27,9 @@ def read_pedido(pedido_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Pedido no encontrado")
     return db_pedido
 
-@router.post("/", response_model=PedidoOut)
-def create_new_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
-     return create_pedido(db, pedido)
+@router.post("/negocios/{id_negocio}", response_model=PedidoOut)
+def create_new_pedido(id_negocio: int, pedido: PedidoCreate, db: Session = Depends(get_db), current_user : Usuario= Depends(get_current_user)):
+     return create_pedido(db, pedido, current_user.id, id_negocio)
 
 # Detalles de Pedido
 @router.get("/detalles/", response_model=List[DetallePedidoOut])
@@ -47,6 +47,17 @@ def read_detalle(detalle_id: int, db: Session = Depends(get_db)):
 def create_new_detalle(detalle: DetallePedidoCreate, db: Session = Depends(get_db)):
      return create_detalle_pedido(db, detalle)
 
+@router.patch("/{pedido_id}/estado", response_model=PedidoOut)
+def cambiar_estado_pedido(
+    pedido_id: int = Path(..., description="ID del pedido"),
+    payload: PedidoEstadoUpdate = Depends(),
+    db: Session = Depends(get_db),
+    admin = Depends(get_current_admin)
+):
+    pedido = update_pedido(db, pedido_id, payload.estado)
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
+    return pedido
 
 # @router.post("/", response_model=PedidoOut)
 # def create_pedido_con_detalles(pedido: PedidoCreate, db: Session = Depends(get_db)):

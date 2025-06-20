@@ -9,8 +9,8 @@ def get_negocio(db: Session, negocio_id: int):
 def get_negocios(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Negocio).offset(skip).limit(limit).all()
 
-def create_negocio(db: Session, negocio: NegocioCreate):
-    db_negocio = Negocio(**negocio.dict())
+def create_negocio(db: Session, negocio: NegocioCreate, id_usuario: int):
+    db_negocio = Negocio(**negocio.dict(), id_usuario = id_usuario)
     db.add(db_negocio)
     db.commit()
     db.refresh(db_negocio)

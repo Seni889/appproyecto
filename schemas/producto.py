@@ -7,7 +7,6 @@ class ProductoBase(BaseModel):
     descripcion: Optional[str] = None
     precio: float
     disponible: Optional[bool] = True
-    id_categoria: int
 
 # Para crear productos
 class ProductoCreate(ProductoBase):

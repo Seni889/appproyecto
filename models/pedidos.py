@@ -2,6 +2,13 @@ from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime, String, Boo
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from basedatos import Base
+from enum import Enum
+
+class EstadoPedidoEnum(str, Enum):
+    pendiente = "pendiente"
+    procesando = "procesando"
+    entregado = "entregado"
+    cancelado = "cancelado"
 
 class Pedido(Base):
     __tablename__ = "pedidos"
@@ -28,3 +35,4 @@ class DetallePedido(Base):
     pedidos = relationship("Pedido", back_populates="detalles")
     productos = relationship("Producto", back_populates="detalle_pedidos")
     detalle_personalizacion = relationship("DetallePersonalizacion", back_populates="detalle_pedidos")
+
