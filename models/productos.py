@@ -15,4 +15,4 @@ class Producto(Base):
     negocio = relationship("Negocio", back_populates="productos")
     categoria = relationship("Categoria", back_populates="productos")
     detalle_pedidos = relationship("DetallePedido", back_populates="productos")
-    producto_personalizacion = relationship("ProductoPersonalizado", back_populates="productos")
+

@@ -34,5 +34,5 @@ class DetallePedido(Base):
 
     pedidos = relationship("Pedido", back_populates="detalles")
     productos = relationship("Producto", back_populates="detalle_pedidos")
-    detalle_personalizacion = relationship("DetallePersonalizacion", back_populates="detalle_pedidos")
+    
 

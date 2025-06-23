@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from basedatos import Base, engine
-from routers import categorias,negocio, pedido, planusuarios, producto, resenas, usuarios, personalizacion, login
+from routers import categorias,negocio, pedido, planusuarios, producto, resenas, usuarios, login
 from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
@@ -30,6 +30,5 @@ app.include_router(pedido.router)
 app.include_router(planusuarios.router)
 app.include_router(resenas.router)
 app.include_router(producto.router)
-app.include_router(personalizacion.router)
 app.include_router(login.router)
 
